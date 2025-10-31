@@ -319,21 +319,28 @@ class AITradingAssistant:
         )
 
         # Create system prompt
-        self.system_prompt = """You are an intelligent trading assistant with access to detailed trading data and market analysis capabilities.
+        self.system_prompt = """You are Agent Chopra, an intelligent trading assistant with market analysis capabilities.
+
+        FORMATTING REQUIREMENTS:
+        - Use single line spacing between sections
+        - Use bullet points (•) for lists
+        - Use **bold** for emphasis on key points
+        - Keep responses concise and well-structured
+        - No excessive spacing or unnecessary line breaks
 
         Your role is to:
-        1. Analyze trading performance and patterns
-        2. Provide insights on portfolio optimization
-        3. Suggest risk management improvements
-        4. Answer questions about trading history and performance
-        5. Offer market analysis and trading ideas
+        1. Analyze trading performance and portfolio composition
+        2. Provide actionable insights and recommendations
+        3. Offer risk management guidance
+        4. Answer trading and market questions clearly
+        5. Generate intelligent stock recommendations
 
         Key guidelines:
-        - Always prioritize risk management and responsible trading
-        - Provide data-driven insights based on actual trading history
-        - Be clear about the limitations of your analysis
-        - Remind users this is for paper trading only
-        - Use specific numbers and metrics when available
+        - Prioritize risk management and responsible trading
+        - Provide data-driven insights with specific metrics
+        - Be clear, concise, and professional in responses
+        - Remind users this is paper trading only
+        - Format responses for easy reading
 
         Remember: This is a paper trading environment - no real money is at risk."""
 
@@ -518,129 +525,83 @@ class AITradingAssistant:
     def get_stock_recommendations(self, risk_profile=None) -> str:
         """Get specific stock recommendations based on user's risk profile"""
         try:
-            # Enhanced stock recommendation logic
+            # Get risk level and user information
             if risk_profile:
                 risk_level = getattr(risk_profile, 'score', 5)
-                user_name = f"{getattr(risk_profile, 'first_name', '')} {getattr(risk_profile, 'last_name', '')}"
+                user_name = f"{getattr(risk_profile, 'first_name', '')} {getattr(risk_profile, 'last_name', '')}".strip()
             else:
                 risk_level = 5
                 user_name = "Investor"
 
-            # Create comprehensive recommendation prompt
-            recommendation_prompt = f"""
-            As an AI trading assistant, I need to provide stock recommendations for {user_name} with a risk level of {risk_level}/10.
+            if not user_name:
+                user_name = "Investor"
 
-            Current Market Context:
-            - Market is showing mixed signals with tech leadership
-            - Economic indicators suggest moderate growth
-            - Interest rates remain a key factor
+            # Build clean, well-formatted recommendations
+            recommendations = []
 
-            Based on the risk level of {risk_level}/10, here are my recommendations:
+            # Header with risk level context
+            header = f"**📈 Stock Recommendations for {user_name} (Risk Level: {risk_level}/10)**"
 
-            """
-
-            # Add risk-appropriate recommendations
             if risk_level <= 3:  # Conservative
-                recommendation_prompt += """
-                CONSERVATIVE RECOMMENDATIONS (Low Risk):
-                1. **Apple (AAPL)** - Stable tech giant with strong fundamentals
-                   - Target: $155-165
-                   - Dividend yield and consistent growth
-
-                2. **Microsoft (MSFT)** - Cloud computing leader with enterprise focus
-                   - Target: $280-300
-                   - Strong recurring revenue model
-
-                3. **Johnson & Johnson (JNJ)** - Healthcare stability
-                   - Target: $165-175
-                   - Defensive characteristics with steady dividends
-
-                4. **Procter & Gamble (PG)** - Consumer staples reliability
-                   - Target: $145-155
-                   - Essential products with pricing power
-                """
+                subtitle = "*Conservative Portfolio - Focus on stability and dividend income*"
+                recommendations = [
+                    "**1. Apple (AAPL)** - Target: $155-165\n• Stable tech leader with strong cash flow and dividends\n• Consistent growth in services revenue",
+                    "**2. Microsoft (MSFT)** - Target: $280-300\n• Cloud computing dominance with Azure platform\n• Recurring subscription revenue model provides stability",
+                    "**3. Johnson & Johnson (JNJ)** - Target: $165-175\n• Healthcare stability with defensive characteristics\n• Dividend aristocrat with 60+ years of increases",
+                    "**4. Procter & Gamble (PG)** - Target: $145-155\n• Consumer staples with strong brand portfolio\n• Reliable cash flows and pricing power"
+                ]
             elif risk_level <= 6:  # Moderate
-                recommendation_prompt += """
-                MODERATE RECOMMENDATIONS (Medium Risk):
-                1. **NVIDIA (NVDA)** - AI and semiconductor growth
-                   - Target: $450-500
-                   - Riding the AI trend with strong fundamentals
+                subtitle = "*Balanced Growth Portfolio - Mix of stability and growth potential*"
+                recommendations = [
+                    "**1. NVIDIA (NVDA)** - Target: $450-500\n• AI semiconductor leader with strong fundamentals\n• Benefiting from AI revolution and data center growth",
+                    "**2. Amazon (AMZN)** - Target: $140-160\n• E-commerce recovery and AWS cloud dominance\n• Strong competitive moats across multiple sectors",
+                    "**3. Tesla (TSLA)** - Target: $200-230\n• EV market leadership and energy storage expansion\n• Autonomous driving technology development",
+                    "**4. Alphabet (GOOGL)** - Target: $130-145\n• Search dominance and AI integration capabilities\n• Strong advertising revenue and cloud growth"
+                ]
+            else:  # Aggressive (7-10)
+                subtitle = "*High Growth Portfolio - Focus on emerging technologies*"
+                recommendations = [
+                    "**1. Advanced Micro Devices (AMD)** - Target: $120-140\n• AI chip innovation competing with NVIDIA\n• Data center and gaming market expansion opportunities",
+                    "**2. Palantir (PLTR)** - Target: $25-35\n• Big data analytics and AI software platform\n• Growing government and enterprise contract pipeline",
+                    "**3. CrowdStrike (CRWD)** - Target: $200-250\n• Cybersecurity market leader with strong growth\n• Increasing threat landscape driving enterprise demand",
+                    "**4. Snowflake (SNOW)** - Target: $160-190\n• Cloud data platform with high growth potential\n• Enterprise digital transformation catalyst"
+                ]
 
-                2. **Amazon (AMZN)** - E-commerce and cloud diversification
-                   - Target: $140-160
-                   - AWS growth and retail recovery
+            # Assemble the response with proper formatting
+            response_parts = [
+                header,
+                subtitle,
+                ""
+            ]
 
-                3. **Tesla (TSLA)** - EV market leader
-                   - Target: $200-230
-                   - Autonomous driving and energy storage potential
+            # Add each recommendation with proper spacing
+            for rec in recommendations:
+                response_parts.append(rec)
+                response_parts.append("")  # Single line break between items
 
-                4. **Alphabet (GOOGL)** - Search dominance and AI integration
-                   - Target: $130-145
-                   - Strong cash position and innovation pipeline
-                """
-            else:  # Aggressive
-                recommendation_prompt += """
-                AGGRESSIVE RECOMMENDATIONS (High Risk):
-                1. **Advanced Micro Devices (AMD)** - Chip innovation
-                   - Target: $120-140
-                   - Competing with Intel and NVIDIA in key markets
+            # Add portfolio strategy section
+            allocation_pct = max(40, 85 - risk_level * 5)
+            position_size = min(15, 5 + risk_level * 1.5)
+            stop_loss = max(5, 12 - risk_level)
 
-                2. **Palantir (PLTR)** - Data analytics growth
-                   - Target: $25-35
-                   - Government contracts and enterprise expansion
+            response_parts.extend([
+                "**💡 Portfolio Strategy:**",
+                f"• Allocate {allocation_pct}% to stable core positions",
+                f"• Maximum {position_size:.0f}% in any single stock",
+                f"• Set stop losses at {stop_loss}% below entry price",
+                f"• Take profits at {15 + risk_level * 3}% gains",
+                "",
+                "**⚠️ Important Notes:**",
+                "• Paper trading environment - practice with virtual money",
+                "• Diversify across sectors to reduce concentration risk",
+                "• Monitor positions and market conditions regularly",
+                "• Always conduct your own research before investing"
+            ])
 
-                3. **Rivian (RIVN)** - Electric vehicle newcomer
-                   - Target: $15-25
-                   - Amazon partnership and EV market opportunity
-
-                4. **CrowdStrike (CRWD)** - Cybersecurity leader
-                   - Target: $200-250
-                   - Growing cyber threats driving demand
-                """
-
-            recommendation_prompt += f"""
-
-            PORTFOLIO ALLOCATION SUGGESTION:
-            - Risk Level {risk_level}/10 suggests {80-risk_level*5}% in stable positions
-            - Maximum single position: {5+risk_level}% of portfolio
-            - Diversify across {3+risk_level//2} different sectors
-
-            RISK MANAGEMENT:
-            - Set stop losses at {10-risk_level}% below entry
-            - Take profits at {15+risk_level*2}% gains
-            - Rebalance monthly to maintain target allocation
-
-            Remember: This is for paper trading practice only. Always do your own research and consider your financial situation.
-            """
-
-            # Return the comprehensive recommendation directly to avoid recursion
-            return recommendation_prompt
+            return "\n".join(response_parts)
 
         except Exception as e:
-            # Fallback recommendation system
-            return f"""
-            **Stock Recommendations for Risk Level {risk_level if 'risk_level' in locals() else 5}/10:**
-
-            **CORE HOLDINGS (60% of portfolio):**
-            • **AAPL** - Apple Inc. ($155 target) - Stable tech with dividends
-            • **MSFT** - Microsoft ($285 target) - Cloud computing leader
-            • **GOOGL** - Alphabet ($135 target) - Search and AI dominance
-
-            **GROWTH POSITIONS (30% of portfolio):**
-            • **NVDA** - NVIDIA ($470 target) - AI chip leadership
-            • **TSLA** - Tesla ($210 target) - EV market leader
-
-            **DEFENSIVE PLAYS (10% of portfolio):**
-            • **JNJ** - Johnson & Johnson ($170 target) - Healthcare stability
-
-            **Key Strategy Points:**
-            ✓ Diversify across technology, healthcare, and consumer sectors
-            ✓ Set stop losses at 8-12% depending on volatility
-            ✓ Take profits at 20-25% gains for growth stocks
-            ✓ Rebalance monthly to maintain target allocation
-
-            *This is for educational/paper trading purposes only. Always conduct your own research.*
-            """
+            return f"**Stock Recommendations Error:** {str(e)}\n\nPlease try again or check your risk profile settings."
 
     def analyze_portfolio(self) -> str:
         """Analyze current portfolio composition"""
