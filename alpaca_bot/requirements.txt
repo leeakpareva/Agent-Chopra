@@ -1,5 +1,37 @@
-alpaca-trade-api==3.1.1
+# Agent Chopra - Streamlit Deployment Requirements
+# Optimized for Python 3.13 compatibility
+
+# Core Dependencies
+streamlit==1.41.1
 python-dotenv==1.0.0
-pandas==2.0.3
-numpy==1.24.3
+pandas==2.2.3
+numpy==2.0.2
+requests==2.31.0
+
+# Trading API (using new alpaca-py instead of deprecated alpaca-trade-api)
+alpaca-py==0.43.1
+
+# Financial Data
+yfinance==0.2.65
+
+# Visualization
+plotly==6.0.0
+streamlit-autorefresh==1.0.1
+
+# AI and Machine Learning
+openai==1.109.1
+langchain==0.3.27
+langchain-openai==0.3.33
+langchain-chroma==0.2.6
+chromadb==1.1.0
+tiktoken==0.8.0
+
+# Database
+sqlalchemy==2.0.23
+
+# Additional Features
 schedule==1.2.0
+bcrypt==4.1.2
+
+# Authentication
+streamlit-authenticator==0.4.1

@@ -19,19 +19,33 @@ class VoiceAssistant:
     """OpenAI Voice Assistant for Agent Chopra"""
 
     def __init__(self):
+        self.client = None
+        self._initialize_client()
+
+    def _initialize_client(self):
+        """Initialize OpenAI client with fresh environment variables"""
+        # Force reload environment variables
+        load_dotenv(override=True)
+
         self.openai_api_key = os.getenv('OPENAI_API_KEY')
         self.tts_prompt_id = os.getenv('OPENAI_TTS_PROMPT_ID')
-        self.client = None
 
         if self.openai_api_key:
-            self.client = OpenAI(api_key=self.openai_api_key)
+            try:
+                self.client = OpenAI(api_key=self.openai_api_key)
+            except Exception as e:
+                st.error(f"Failed to initialize OpenAI client: {str(e)}")
+                self.client = None
         else:
             st.warning("⚠️ OpenAI API key not configured. Voice features will be unavailable.")
 
     def text_to_speech(self, text: str, voice: str = "alloy", model: str = "tts-1") -> Optional[bytes]:
         """Convert text to speech using OpenAI TTS"""
         if not self.client:
-            return None
+            # Try to re-initialize client in case API key was updated
+            self._initialize_client()
+            if not self.client:
+                return None
 
         try:
             response = self.client.audio.speech.create(
@@ -43,13 +57,33 @@ class VoiceAssistant:
             return response.content
 
         except Exception as e:
-            st.error(f"OpenAI TTS error: {str(e)}")
+            error_msg = str(e)
+            st.error(f"OpenAI TTS error: {error_msg}")
+
+            # If it's an API key error, try to reinitialize once
+            if "api key" in error_msg.lower() or "401" in error_msg:
+                st.info("🔄 Attempting to reload API credentials...")
+                self._initialize_client()
+                if self.client:
+                    try:
+                        response = self.client.audio.speech.create(
+                            model=model,
+                            voice=voice,
+                            input=text
+                        )
+                        return response.content
+                    except Exception as retry_e:
+                        st.error(f"Retry failed: {str(retry_e)}")
+
             return None
 
     def generate_trading_commentary(self, market_data: Dict) -> str:
         """Generate trading commentary using custom prompt"""
         if not self.client:
-            return "Voice assistant unavailable - OpenAI API key not configured."
+            # Try to re-initialize client in case API key was updated
+            self._initialize_client()
+            if not self.client:
+                return "Voice assistant unavailable - OpenAI API key not configured."
 
         try:
             # Enhanced prompt for trading commentary
