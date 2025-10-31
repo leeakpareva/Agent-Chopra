@@ -34,13 +34,6 @@ from ai_trading_assistant import AITradingAssistant
 from risk_profiler import RiskProfiler, RiskProfile
 from database.models import db_manager, User, RiskLevel
 
-# Import automated trading bot
-try:
-    from trading_bot_v2 import AlpacaTraderV2
-    TRADING_BOT_AVAILABLE = True
-except ImportError:
-    TRADING_BOT_AVAILABLE = False
-    st.warning("⚠️ Trading bot module not available. Please check trading_bot_v2.py")
 
 # Import new advanced features
 try:
@@ -1192,20 +1185,7 @@ class AgentChopra:
 
         # Main content tabs
         if st.session_state.ai_assistant:
-            if ADVANCED_FEATURES_AVAILABLE and TRADING_BOT_AVAILABLE:
-                tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9, tab10 = st.tabs([
-                    "Command Center",
-                    "AI Assistant",
-                    "AI Insights",
-                    "Recommendations",
-                    "Daily P&L",
-                    "Watchlist",
-                    "Market News",
-                    "Research",
-                    "Voice Assistant",
-                    "Auto Trading"
-                ])
-            elif ADVANCED_FEATURES_AVAILABLE:
+            if ADVANCED_FEATURES_AVAILABLE:
                 tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9 = st.tabs([
                     "Command Center",
                     "AI Assistant",
@@ -1216,15 +1196,6 @@ class AgentChopra:
                     "Market News",
                     "Research",
                     "Voice Assistant"
-                ])
-            elif TRADING_BOT_AVAILABLE:
-                tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
-                    "Command Center",
-                    "AI Assistant",
-                    "AI Insights",
-                    "Recommendations",
-                    "Risk Profile",
-                    "Auto Trading"
                 ])
             else:
                 tab1, tab2, tab3, tab4, tab5 = st.tabs([
