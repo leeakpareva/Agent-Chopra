@@ -1,0 +1,35 @@
+# Agent Chopra - Complete Requirements
+# Advanced AI Trading Platform with Risk Profiling
+
+# Core Trading APIs
+alpaca-py==0.43.1
+python-dotenv==1.0.0
+pandas==2.0.3
+requests==2.31.0
+numpy==1.26.4
+
+# Financial Data
+yfinance==0.2.65
+
+# UI Framework & Visualization
+streamlit==1.41.1
+plotly==6.0.0
+streamlit-autorefresh==1.0.1
+streamlit-authenticator==0.4.1
+
+# AI and Machine Learning
+langchain==0.3.27
+langchain-openai==0.3.33
+langchain-chroma==0.2.6
+chromadb==1.1.0
+openai==1.109.1
+tiktoken==0.8.0
+"langsmith[openai-agents]"
+
+# Database
+sqlalchemy==2.0.23
+psycopg2-binary==2.9.9
+
+# Additional Features
+schedule==1.2.0
+bcrypt==4.1.2

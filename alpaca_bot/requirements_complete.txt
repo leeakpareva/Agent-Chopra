@@ -1,0 +1,27 @@
+# Complete requirements for AI-Enhanced Alpaca Trading Bot
+
+# Core Trading
+alpaca-py==0.43.1
+python-dotenv==1.0.0
+pandas==2.0.3
+requests==2.31.0
+
+# UI Framework
+streamlit==1.41.1
+plotly==6.0.0
+streamlit-autorefresh==1.0.1
+
+# AI and RAG Components
+langchain==0.3.27
+langchain-openai==0.3.33
+langchain-chroma==0.2.6
+chromadb==1.1.0
+openai==1.109.1
+tiktoken==0.8.0
+
+# Data Processing
+numpy==1.26.4
+sqlalchemy==2.0.23
+
+# Optional: Enhanced features
+schedule==1.2.0
