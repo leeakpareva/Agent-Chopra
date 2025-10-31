@@ -7,7 +7,8 @@ Real-time web search capabilities for market research and news
 import requests
 import json
 import os
-from datetime import datetime
+import time
+from datetime import datetime, timedelta
 from typing import Dict, List, Optional
 import streamlit as st
 from dotenv import load_dotenv
@@ -25,13 +26,41 @@ class BraveSearchAPI:
             'Accept-Encoding': 'gzip'
         }
 
+        # Rate limiting - allow 1 request per 2 seconds
+        self.last_request_time = 0
+        self.min_request_interval = 2.0  # seconds
+
+        # Simple cache with 30-minute expiry
+        self.cache = {}
+        self.cache_expiry = 1800  # 30 minutes in seconds
+
         if self.api_key:
             self.headers['X-Subscription-Token'] = self.api_key
         else:
             st.warning("⚠️ Brave Search API key not configured. Search features will be limited.")
 
+    def _get_cache_key(self, endpoint: str, params: dict) -> str:
+        """Generate cache key from endpoint and parameters"""
+        return f"{endpoint}_{hash(str(sorted(params.items())))}"
+
+    def _is_cache_valid(self, cache_entry: dict) -> bool:
+        """Check if cache entry is still valid"""
+        return time.time() - cache_entry['timestamp'] < self.cache_expiry
+
+    def _rate_limit(self):
+        """Implement rate limiting"""
+        current_time = time.time()
+        time_since_last = current_time - self.last_request_time
+
+        if time_since_last < self.min_request_interval:
+            sleep_time = self.min_request_interval - time_since_last
+            st.info(f"⏱️ Rate limiting: waiting {sleep_time:.1f} seconds...")
+            time.sleep(sleep_time)
+
+        self.last_request_time = time.time()
+
     def web_search(self, query: str, count: int = 10, safesearch: str = "moderate") -> Optional[Dict]:
-        """Perform web search using Brave Search API"""
+        """Perform web search using Brave Search API with caching and rate limiting"""
         if not self.api_key:
             return None
 
@@ -45,7 +74,16 @@ class BraveSearchAPI:
             'spellcheck': True
         }
 
+        # Check cache first
+        cache_key = self._get_cache_key("web_search", params)
+        if cache_key in self.cache and self._is_cache_valid(self.cache[cache_key]):
+            st.info("📋 Using cached search results")
+            return self.cache[cache_key]['data']
+
         try:
+            # Apply rate limiting
+            self._rate_limit()
+
             response = requests.get(
                 f"{self.base_url}/web/search",
                 headers=self.headers,
@@ -53,14 +91,30 @@ class BraveSearchAPI:
                 timeout=10
             )
             response.raise_for_status()
-            return response.json()
+            result = response.json()
+
+            # Cache the result
+            self.cache[cache_key] = {
+                'data': result,
+                'timestamp': time.time()
+            }
+
+            return result
+
+        except requests.exceptions.HTTPError as e:
+            if e.response.status_code == 429:
+                st.error("🚫 Rate limit exceeded. Please wait before making more requests.")
+                st.info("💡 Try using cached results or wait 1-2 minutes before searching again.")
+            else:
+                st.error(f"Brave Search API HTTP error: {str(e)}")
+            return None
 
         except Exception as e:
             st.error(f"Brave Search API error: {str(e)}")
             return None
 
     def news_search(self, query: str, count: int = 10, safesearch: str = "moderate") -> Optional[Dict]:
-        """Perform news search using Brave Search API"""
+        """Perform news search using Brave Search API with caching and rate limiting"""
         if not self.api_key:
             return None
 
@@ -74,7 +128,16 @@ class BraveSearchAPI:
             'freshness': 'pd'  # Past day
         }
 
+        # Check cache first (shorter cache for news - 10 minutes)
+        cache_key = self._get_cache_key("news_search", params)
+        if cache_key in self.cache and (time.time() - self.cache[cache_key]['timestamp']) < 600:  # 10 minutes
+            st.info("📰 Using cached news results")
+            return self.cache[cache_key]['data']
+
         try:
+            # Apply rate limiting
+            self._rate_limit()
+
             response = requests.get(
                 f"{self.base_url}/news/search",
                 headers=self.headers,
@@ -82,7 +145,23 @@ class BraveSearchAPI:
                 timeout=10
             )
             response.raise_for_status()
-            return response.json()
+            result = response.json()
+
+            # Cache the result
+            self.cache[cache_key] = {
+                'data': result,
+                'timestamp': time.time()
+            }
+
+            return result
+
+        except requests.exceptions.HTTPError as e:
+            if e.response.status_code == 429:
+                st.error("🚫 Rate limit exceeded. Please wait before making more requests.")
+                st.info("💡 Try using cached results or wait 1-2 minutes before searching again.")
+            else:
+                st.error(f"Brave News Search API HTTP error: {str(e)}")
+            return None
 
         except Exception as e:
             st.error(f"Brave News Search API error: {str(e)}")
