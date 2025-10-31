@@ -1,0 +1,261 @@
+# Agent Chopra - Security & Privacy .gitignore
+# Comprehensive protection for secrets, API keys, and sensitive data
+
+# ==========================================
+# 🔐 CRITICAL SECURITY FILES - NEVER COMMIT
+# ==========================================
+
+# Environment variables and secrets
+.env
+.env.local
+.env.production
+.env.staging
+.env.development
+.env.test
+
+# Allow template files (safe to commit)
+!.env.example
+!.env.template
+
+# API Keys and Credentials
+*api_key*
+*secret*
+*token*
+*credentials*
+*password*
+config/secrets.json
+secrets/
+keys/
+certificates/
+
+# Database files with potentially sensitive data
+*.db
+*.sqlite
+*.sqlite3
+agent_chopra.db
+agent_chopra_db.*
+
+# ==========================================
+# 🗄️ DATABASE & STORAGE
+# ==========================================
+
+# Local database files
+*.db-journal
+*.db-wal
+*.db-shm
+
+# ChromaDB vector store (may contain sensitive trading data)
+chroma_db/
+vector_store/
+embeddings/
+
+# Backup files
+*.backup
+*.bak
+backups/
+
+# ==========================================
+# 📊 TRADING & FINANCIAL DATA
+# ==========================================
+
+# Trading logs with potential sensitive information
+logs/
+*.log
+trading_logs/
+performance_data/
+portfolio_snapshots/
+
+# User data and profiles
+user_data/
+profiles/
+risk_assessments/
+
+# Trading history exports
+*.csv
+*.xlsx
+reports/
+exports/
+
+# ==========================================
+# 🔧 DEVELOPMENT & BUILD
+# ==========================================
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.venv/
+agent_chopra_env/
+
+# IDE and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Jupyter Notebooks with potentially sensitive outputs
+.ipynb_checkpoints/
+*.ipynb
+
+# ==========================================
+# 🌐 WEB & DEPLOYMENT
+# ==========================================
+
+# Streamlit
+.streamlit/
+.streamlit/secrets.toml
+
+# Node.js (if any frontend components)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ==========================================
+# ☁️ CLOUD & DEPLOYMENT SECRETS
+# ==========================================
+
+# Docker
+.dockerignore
+Dockerfile.prod
+
+# AWS
+.aws/
+*.pem
+aws-exports.js
+
+# Heroku
+.env.production
+
+# ==========================================
+# 🧪 TESTING & DEVELOPMENT
+# ==========================================
+
+# Test coverage
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# ==========================================
+# 📦 TEMPORARY & CACHE FILES
+# ==========================================
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+temp/
+tmp/
+
+# Cache directories
+.cache/
+__pycache__/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# ==========================================
+# 🚨 ADDITIONAL SECURITY PATTERNS
+# ==========================================
+
+# Any file containing "secret", "key", "token", "password"
+*secret*
+*key*
+*token*
+*password*
+*credential*
+
+# Configuration files that might contain secrets
+config.json
+config.yaml
+config.yml
+settings.json
+local_settings.py
+
+# SSL certificates
+*.crt
+*.key
+*.pem
+*.p12
+*.pfx
+
+# SSH keys
+id_rsa
+id_dsa
+id_ecdsa
+id_ed25519
+*.ssh
+
+# ==========================================
+# 🎯 PROJECT SPECIFIC EXCLUSIONS
+# ==========================================
+
+# Agent Chopra specific sensitive files
+alpaca_credentials.json
+openai_config.json
+langsmith_config.json
+risk_profiles.json
+user_portfolios.json
+
+# Application logs
+agent_chopra.log
+trading_session.log
+ai_interactions.log
+error.log
+
+# Performance and analytics data
+analytics/
+metrics/
+performance_tracking/
+
+# User uploads and data
+uploads/
+user_files/
+imported_data/
