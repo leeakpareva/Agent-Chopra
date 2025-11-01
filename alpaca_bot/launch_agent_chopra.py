@@ -12,22 +12,22 @@ from pathlib import Path
 def display_banner():
     """Display Agent Chopra banner"""
     banner = """
-    ╔══════════════════════════════════════════════════════════════╗
-    ║                                                              ║
-    ║                     🔥 AGENT CHOPRA 🔥                       ║
-    ║              Advanced AI Trading Intelligence Platform        ║
-    ║                                                              ║
-    ║  🎯 Risk-Optimized Trading    🧠 AI-Powered Insights        ║
-    ║  ⚡ Real-time Analysis        🔥 Dark Theme Interface        ║
-    ║  📊 Portfolio Intelligence    🤖 LangSmith Integration       ║
-    ║                                                              ║
-    ╚══════════════════════════════════════════════════════════════╝
+    ==============================================================
+    |                                                            |
+    |                    AGENT CHOPRA                            |
+    |            Advanced AI Trading Intelligence Platform       |
+    |                                                            |
+    |  Risk-Optimized Trading    AI-Powered Insights            |
+    |  Real-time Analysis        Dark Theme Interface           |
+    |  Portfolio Intelligence    LangSmith Integration          |
+    |                                                            |
+    ==============================================================
     """
     print(banner)
 
 def check_and_install_dependencies():
     """Check and install all required packages for Agent Chopra"""
-    print("🔍 Checking Agent Chopra dependencies...")
+    print("Checking Agent Chopra dependencies...")
 
     required_packages = [
         'streamlit',
@@ -51,13 +51,26 @@ def check_and_install_dependencies():
 
     missing_packages = []
 
+    # Map package names to their import names
+    import_mapping = {
+        'alpaca-py': 'alpaca',
+        'python-dotenv': 'dotenv',
+        'streamlit-autorefresh': 'streamlit_autorefresh',
+        'streamlit-authenticator': 'streamlit_authenticator',
+        'psycopg2-binary': 'psycopg2',
+        'langchain-openai': 'langchain_openai',
+        'langchain-chroma': 'langchain_chroma'
+    }
+
     for package in required_packages:
         package_name = package.replace('"', '').split('[')[0]
+        import_name = import_mapping.get(package_name, package_name.replace('-', '_'))
+
         try:
-            __import__(package_name.replace('-', '_'))
-            print(f"✅ {package_name}")
+            __import__(import_name)
+            print(f"[OK] {package_name}")
         except ImportError:
-            print(f"❌ {package_name} - MISSING")
+            print(f"[MISSING] {package_name}")
             missing_packages.append(package)
 
     if missing_packages:

@@ -556,7 +556,7 @@ def create_daily_pnl_dashboard(alpha_api: AlphaVantageAPI, market_intel: MarketI
                         'cost_basis': '${:,.2f}',
                         'pnl': '${:,.2f}',
                         'pnl_percent': '{:.2f}%'
-                    }).applymap(
+                    }).map(
                         lambda x: 'color: #00FF41' if isinstance(x, (int, float)) and x > 0
                         else 'color: #FF1744' if isinstance(x, (int, float)) and x < 0
                         else '',

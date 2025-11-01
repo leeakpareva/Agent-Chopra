@@ -35,3 +35,15 @@ bcrypt==4.1.2
 
 # Authentication
 streamlit-authenticator==0.4.1
+
+# Google API integration
+google-api-python-client==2.160.0
+google-auth==2.38.0
+google-auth-oauthlib==1.2.3
+google-auth-httplib2==0.2.0
+
+# News API integration
+newsapi-python==0.2.7
+
+# Text-to-Speech (optional)
+pyttsx3==2.90
